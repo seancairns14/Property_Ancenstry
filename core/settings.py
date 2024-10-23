@@ -91,29 +91,30 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DB_ENGINE   = os.getenv('DB_ENGINE'   , None)
-DB_USERNAME = os.getenv('DB_USERNAME' , None)
-DB_PASS     = os.getenv('DB_PASS'     , None)
-DB_HOST     = os.getenv('DB_HOST'     , None)
-DB_PORT     = os.getenv('DB_PORT'     , None)
-DB_NAME     = os.getenv('DB_NAME'     , None)
+DB_ENGINE   = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
+DB_USERNAME = os.getenv('DB_USERNAME', None)
+DB_PASS     = os.getenv('DB_PASS', None)
+DB_HOST     = os.getenv('DB_HOST', None)
+DB_PORT     = os.getenv('DB_PORT', None)
+DB_NAME     = os.getenv('DB_NAME', 'db.sqlite3')
 
-if DB_ENGINE and DB_NAME and DB_USERNAME:
-    DATABASES = { 
-      'default': {
-        'ENGINE'  : 'django.db.backends.' + DB_ENGINE, 
-        'NAME'    : DB_NAME,
-        'USER'    : DB_USERNAME,
-        'PASSWORD': DB_PASS,
-        'HOST'    : DB_HOST,
-        'PORT'    : DB_PORT,
-        }, 
+if DB_ENGINE == 'djongo' and DB_NAME and DB_USERNAME and DB_HOST:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'djongo',
+            'NAME': DB_NAME,  # Use environment variable for the database name
+            'CLIENT': {
+                'host': f'mongodb+srv://{DB_USERNAME}:{DB_PASS}@{DB_HOST}/{DB_NAME}?retryWrites=true&w=majority',
+                'authSource': 'admin',
+                'authMechanism': 'SCRAM-SHA-1',
+            }
+        }
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'db.sqlite3',
+            'NAME': DB_NAME,
         }
     }
 
