@@ -91,18 +91,18 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DB_ENGINE   = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
+
+DB_ENGINE   = os.getenv('DB_ENGINE', None)  # Should be set to "djongo" for MongoDB
 DB_USERNAME = os.getenv('DB_USERNAME', None)
 DB_PASS     = os.getenv('DB_PASS', None)
 DB_HOST     = os.getenv('DB_HOST', None)
-DB_PORT     = os.getenv('DB_PORT', None)
-DB_NAME     = os.getenv('DB_NAME', 'db.sqlite3')
+DB_NAME     = os.getenv('DB_NAME', None)
 
 if DB_ENGINE == 'djongo' and DB_NAME and DB_USERNAME and DB_HOST:
     DATABASES = {
         'default': {
-            'ENGINE': 'djongo',
-            'NAME': DB_NAME,  # Use environment variable for the database name
+            'ENGINE': 'djongo',  # The correct engine to use MongoDB with Django
+            'NAME': DB_NAME,
             'CLIENT': {
                 'host': f'mongodb+srv://{DB_USERNAME}:{DB_PASS}@{DB_HOST}/{DB_NAME}?retryWrites=true&w=majority',
                 'authSource': 'admin',
@@ -114,7 +114,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': DB_NAME,
+            'NAME': 'db.sqlite3',
         }
     }
 
