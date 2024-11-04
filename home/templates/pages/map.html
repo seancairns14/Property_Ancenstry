@@ -1,0 +1,46 @@
+<!-- map.html -->
+{% extends "pages/base.html" %}
+
+{% block title %}Map{% endblock %}
+
+{% block content %}
+<div id="map-container" style="width: 100vw; height: 100vh;">
+  <h2>Map View</h2>
+  <div id="map" style="width: 100%; height: 90vh;"></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Initialize the map and set its view to a given place and zoom level
+  const map = L.map('map').setView([40.730610, -73.935242], 12); // New York City coordinates
+
+  // Add OpenStreetMap tile layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  // Add a marker and a popup to the initial view location
+  L.marker([40.730610, -73.935242]).addTo(map)
+    .bindPopup('A marker in NYC.')
+    .openPopup();
+
+  // Add click event to add markers on the map dynamically
+  map.on('click', function(e) {
+    L.marker(e.latlng).addTo(map)
+      .bindPopup("New marker at " + e.latlng.toString())
+      .openPopup();
+  });
+
+  // Dynamically add markers if passed from the view
+  const locations = {{ locations|safe }};
+  if (locations) {
+    locations.forEach(loc => {
+      L.marker([loc.lat, loc.lng]).addTo(map)
+        .bindPopup(loc.name)
+        .openPopup();
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!-- grid.html -->
+{% extends "pages/base.html" %}
+
+{% block title %}Grid{% endblock %}
+
+{% block content %}
+<div id="grid-container" style="width: 100vw; height: 100vh;"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('grid-container', {
+    crs: L.CRS.Simple,
+    minZoom: -5,
+    zoomSnap: 0.5,
+    zoomDelta: 0.5,
+  }).setView([0, 0], 0);
+
+  function clearGrid() {
+    map.eachLayer(layer => {
+      if (layer instanceof L.Polyline) map.removeLayer(layer);
+    });
+  }
+
+  function drawInfiniteGrid(spacing = 50) {
+    const bounds = map.getBounds();
+    const minX = Math.floor(bounds.getWest() / spacing) * spacing;
+    const maxX = Math.ceil(bounds.getEast() / spacing) * spacing;
+    const minY = Math.floor(bounds.getSouth() / spacing) * spacing;
+    const maxY = Math.ceil(bounds.getNorth() / spacing) * spacing;
+
+    for (let x = minX; x <= maxX; x += spacing) {
+      L.polyline([[minY, x], [maxY, x]], { color: '#ccc', weight: 1 }).addTo(map);
+    }
+
+    for (let y = minY; y <= maxY; y += spacing) {
+      L.polyline([[y, minX], [y, maxX]], { color: '#ccc', weight: 1 }).addTo(map);
+    }
+  }
+
+  drawInfiniteGrid();
+
+  map.on('moveend', () => {
+    clearGrid();
+    drawInfiniteGrid();
+  });
+
+  map.on('zoomend', () => {
+    clearGrid();
+    drawInfiniteGrid();
+  });
+</script>
+{% endblock %}

@@ -19,8 +19,6 @@ class Plot(models.Model):
     size_sq_ft = models.FloatField()
     zoning = models.CharField(max_length=50)
     current_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, related_name="plots")
-    x_postion = models.PositiveBigIntegerField()
-    y_position = models.PositiveBigIntegerField()
 
 
     def __str__(self):

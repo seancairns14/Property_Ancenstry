@@ -1,0 +1,53 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Application{% endblock %}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        /* Common styles for the navigation bar */
+        .tab-container {
+            display: flex;
+            justify-content: space-around;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            z-index: 10;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .tab:hover, .tab.active {
+            background-color: #555;
+            font-weight: bold;
+        }
+
+        .content-container {
+            padding-top: 50px; /* Offset for navbar */
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-container">
+        <a href="{% url 'index' %}" class="tab">Home</a>
+        <a href="{% url 'map' %}" class="tab">Map</a>
+        <a href="{% url 'grid' %}" class="tab">Grid</a>
+        <a href="{% url 'settings' %}" class="tab">Settings</a>
+    </div>
+
+    <div class="content-container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

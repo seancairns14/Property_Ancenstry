@@ -1,14 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Grid Plot</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'grid/style.css' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infinite Zoomable and Movable Grid</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    /* Full-screen grid container */
+    #grid-container {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="gridCanvas"></canvas>
-    <script src="{% static 'grid/script.js' %}"></script>
+  <div id="grid-container"></div>
+  
+  <!-- Leaflet.js library -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize the map with Leaflet, using a simple coordinate system
+    const map = L.map('grid-container', {
+      crs: L.CRS.Simple,
+      minZoom: -5,
+      zoomSnap: 0.5,
+      zoomDelta: 0.5,
+    }).setView([0, 0], 0);
+
+    // Function to clear existing grid lines
+    function clearGrid() {
+      map.eachLayer(layer => {
+        if (layer instanceof L.Polyline) map.removeLayer(layer);
+      });
+    }
+
+    // Function to draw grid lines dynamically based on the visible map bounds
+    function drawInfiniteGrid(spacing = 50) {
+      const bounds = map.getBounds(); // Get current visible bounds
+      const minX = Math.floor(bounds.getWest() / spacing) * spacing;
+      const maxX = Math.ceil(bounds.getEast() / spacing) * spacing;
+      const minY = Math.floor(bounds.getSouth() / spacing) * spacing;
+      const maxY = Math.ceil(bounds.getNorth() / spacing) * spacing;
+
+      // Draw vertical lines
+      for (let x = minX; x <= maxX; x += spacing) {
+        L.polyline([[minY, x], [maxY, x]], { color: '#ccc', weight: 1 }).addTo(map);
+      }
+
+      // Draw horizontal lines
+      for (let y = minY; y <= maxY; y += spacing) {
+        L.polyline([[y, minX], [y, maxX]], { color: '#ccc', weight: 1 }).addTo(map);
+      }
+    }
+
+    // Initial grid draw
+    drawInfiniteGrid();
+
+    // Event listeners for panning and zooming to redraw grid dynamically
+    map.on('moveend', () => {
+      clearGrid();
+      drawInfiniteGrid();
+    });
+    map.on('zoomend', () => {
+      clearGrid();
+      drawInfiniteGrid();
+    });
+
+  </script>
 </body>
 </html>
