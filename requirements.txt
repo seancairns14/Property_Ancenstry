@@ -1,18 +1,31 @@
-# Core
-django==4.1.13
-python-dotenv==1.0.1
-str2bool==1.1
+# Django framework and core dependencies
+Django==4.1.13
+asgiref==3.8.1
+sqlparse==0.2.4
+pytz==2024.2
 
-# UI 
+# Django admin and UI customization
 django-admin-tabler==1.0.2
+whitenoise==6.8.2
 
-# Deployment
-whitenoise==6.6.0
-gunicorn==21.2.0
-
-# psycopg2-binary
-# mysqlclient
+# Database and ORM libraries
+djongo==1.3.6          # MongoDB support for Django
 pymongo==3.12.3
-djongo==1.3.6
-dnspython
-pytz
+dnspython==2.7.0
+
+# WSGI server
+gunicorn==23.0.0
+
+# Environment configuration
+python-dotenv==1.0.1
+
+# Utility libraries
+str2bool==1.1
+typing_extensions==4.12.2
+packaging==24.1
+
+# Build and installation tools
+pip==24.3.1
+setuptools==65.5.1
+wheel==0.44.0
+
