@@ -4,15 +4,20 @@ FROM python:3.10
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Copy requirements file and install dependencies
 COPY requirements.txt .
-# install python dependencies
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+RUN echo "Upgrading pip..." && \
+    pip install --upgrade pip
+RUN echo "Installing dependencies from requirements.txt..." && \
+    pip install --no-cache-dir -r requirements.txt -v
 
+# Copy application files
 COPY . .
 
-# running migrations
-RUN python manage.py migrate
+# Running migrations
+RUN echo "Running Django migrations..." && \
+    python manage.py migrate
 
-# gunicorn
-CMD ["gunicorn", "--config", "gunicorn-cfg.py", "core.wsgi"]
+# Gunicorn command with console logging enabled
+CMD ["gunicorn", "--config", "gunicorn-cfg.py", "--access-logfile", "-", "--error-logfile", "-", "core.wsgi"]
+
