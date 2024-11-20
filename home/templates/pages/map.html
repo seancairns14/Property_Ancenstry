@@ -1,69 +1,50 @@
-<!-- map.html -->
 {% extends "pages/base.html" %}
 
-{% block title %}Interactive Land Use Map{% endblock %}
+{% block title %}Map{% endblock %}
 
 {% block content %}
-<div id="map" style="height: 600px; width: 100%;"></div>
-
-<script>
-    // Initialize the map and set the view to a given place and zoom level
-    const map = L.map('map').setView([51.505, -0.09], 13);  // Replace with your desired coordinates and zoom
-
-    // Add OpenStreetMap base layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    // Function to style the land use polygons
-    function landUseStyle(feature) {
-        return {
-            color: "#3388ff",   // Outline color
-            weight: 2,
-            opacity: 0.6,
-            fillOpacity: 0.2,
-            fillColor: feature.properties.landuse === 'forest' ? '#228B22' : '#FFA500'  // Color coding by type
-        };
+<div class="map-container">
+    <div id="map"></div>
+</div>
+<style>
+    .map-container {
+        position: relative;
+        height: calc(100vh - 50px); /* Adjust height to leave space for tabs */
+        margin-top: 10px; /* Space between the tabs and map */
     }
 
-    // Function to fetch and display land use data based on current map bounds
-    function loadLandUseData() {
-        const bounds = map.getBounds();  // Get the current map bounds
-        const latMin = bounds.getSouth();  // Latitude of the bottom-left corner
-        const latMax = bounds.getNorth();  // Latitude of the top-right corner
-        const lonMin = bounds.getWest();  // Longitude of the bottom-left corner
-        const lonMax = bounds.getEast();  // Longitude of the top-right corner
-
-        const overpassQuery = `
-            [out:json];
-            (way[landuse](${latMin},${lonMin},${latMax},${lonMax}););
-            out body;
-        `;
-
-        // Fetch land use data from Overpass API for the current map bounds
-        fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`)
-            .then(response => response.json())
-            .then(data => {
-                // Convert OSM data (XML or JSON) to GeoJSON using osmtogeojson
-                const geojsonData = osmtogeojson(data);  // Use osmtogeojson here
-
-                const landUseLayer = L.geoJSON(geojsonData, {
-                    style: landUseStyle,
-                    onEachFeature: function(feature, layer) {
-                        // Adding interactivity - show popup on click with land use type
-                        layer.on('click', function() {
-                            layer.bindPopup(`<strong>Land Use Type:</strong> ${feature.properties.landuse}`).openPopup();
-                        });
-                    }
-                });
-                landUseLayer.addTo(map);  // Add the land use layer to the map
-            })
-            .catch(error => console.error('Error fetching or parsing land use data:', error));
+    #map {
+        width: 100%;
+        height: 100%; /* Fill the map container */
     }
 
-    // Load land use data initially and on map move (pan or zoom)
-    loadLandUseData();  // Initial data load
-    map.on('moveend', loadLandUseData);  // Load new data after map move
-</script>
+</style>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Include required libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-vector@4.2.5/dist/esri-leaflet-vector.js"></script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize the map
+            const map = L.map("map", {
+                minZoom: 2,
+                center: [34.02, -118.805], // Center coordinates
+                zoom: 13 // Initial zoom level
+            });
+
+            // Define the access token and basemap configuration
+            const accessToken = "AAPTxy8BH1VEsoebNVZXo8HurP19bjcxUulX2DZhKx0tgkYsvJQUCTNVxhpyoVOz3oBUD712ADrDaHFtQmN3-Zmyo0VVMbNYTWQJ-_F72zjwf0T2vA7B8NHSl6zz0kYo9_TdqYw42KKp_ylkL6RJfT1IeZzBlentsC6wNeuMxUIAWEioTd2auQJ2QHu_BzkCFFwDV62JcySVyJFSjBHS-ySqzSpMSkfvYMpLHeH59PZPrzw.AT1_E3mwdEJr";
+            const basemapEnum = "arcgis/streets";
+
+            // Add the vector basemap layer
+            L.esri.Vector.vectorBasemapLayer(basemapEnum, {
+                token: accessToken
+            }).addTo(map);
+        });
+    </script>
 {% endblock %}
