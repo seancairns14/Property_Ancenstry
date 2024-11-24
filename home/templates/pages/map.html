@@ -29,22 +29,20 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Initialize the map
-            const map = L.map("map", {
-                minZoom: 2,
-                center: [34.02, -118.805], // Center coordinates
-                zoom: 13 // Initial zoom level
-            });
+        
+    const map = L.map("map", {
+      minZoom: 2
+    })
 
-            // Define the access token and basemap configuration
-            const accessToken = "AAPTxy8BH1VEsoebNVZXo8HurP19bjcxUulX2DZhKx0tgkYsvJQUCTNVxhpyoVOz3oBUD712ADrDaHFtQmN3-Zmyo0VVMbNYTWQJ-_F72zjwf0T2vA7B8NHSl6zz0kYo9_TdqYw42KKp_ylkL6RJfT1IeZzBlentsC6wNeuMxUIAWEioTd2auQJ2QHu_BzkCFFwDV62JcySVyJFSjBHS-ySqzSpMSkfvYMpLHeH59PZPrzw.AT1_E3mwdEJr";
-            const basemapEnum = "arcgis/streets";
+    map.setView([34.02, -118.805], 13);
 
-            // Add the vector basemap layer
-            L.esri.Vector.vectorBasemapLayer(basemapEnum, {
-                token: accessToken
-            }).addTo(map);
-        });
+    const accessToken = "AAPTxy8BH1VEsoebNVZXo8HurP19bjcxUulX2DZhKx0tgkYXRyn8hGuyQJNuAVs7evMCJ8U50rJJVZeC5weHlD_6zmC7_MczQC_yzrxKVx9_SrgWk3lLwOJR_oNgXw7TG0Iw29Z0NOaAiWFjraOG4dn_zXmb3DhAa51nroz2WiMu_W1uP3YyTqMEVTDfd10lqgYED8ikDrGxJYnXSMCrBCNL4lnlKzeN84vBPaB5jHR0I-EM7N8c-hm7ztLe6jvj23UFAT1_E3mwdEJr";
+
+    const basemapEnum = "arcgis/streets";
+
+    L.esri.Vector.vectorBasemapLayer(basemapEnum, {
+      token: accessToken
+    }).addTo(map);
+
     </script>
 {% endblock %}
